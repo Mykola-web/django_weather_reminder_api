@@ -1,0 +1,97 @@
+import os
+from django.contrib.auth import authenticate
+from rest_framework import serializers
+from .models import CustomUser, Subscriptions
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only = True, required = True)
+    password2 = serializers.CharField(write_only = True, required = True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'password', 'password2', 'preferred_notification_type', 'webhook_url']
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({
+                'password': 'The passwords do not match.'
+            })
+
+        if attrs['preferred_notification_type'] == 'webhook' and not attrs['webhook_url']:
+            raise serializers.ValidationError({
+                'webhook_url': 'Webhook URL is required when preferred notification type is webhook.'
+            })
+
+        if CustomUser.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({
+                'email': 'User with this email already exists'
+            })
+        return attrs
+
+    def create(self, validated_data):
+        user = CustomUser(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            preferred_notification_type=validated_data['preferred_notification_type'],
+            webhook_url=validated_data.get('webhook_url', None)
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only = True)
+
+    def validate(self, data):
+        user = authenticate(**data)
+        if user and user.is_active:
+            return user
+        raise serializers.ValidationError("Wrong password or username")
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'preferred_notification_type', 'webhook_url']
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscriptions
+        fields = ['id', 'user', 'city', 'notification_frequency',
+                  'humidity', 'precipitation', 'wind_speed','last_notified']
+        read_only_fields = ['id', 'user', 'last_notified']
+
+    def validate_city(self, value):
+        #city existence validation
+        response = requests.get(
+            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey=OVOkzr6E7ZKU6colAan0wAAGo7WxLIIU')
+
+        if response.status_code != 200:
+            raise serializers.ValidationError("Invalid location")
+        #one city one subscription check means no dublication
+        user = self.context['request'].user
+
+        if not user.is_authenticated:
+            raise serializers.ValidationError("You must be logged in")
+
+        if Subscriptions.objects.filter(user = user, city = value).exists():
+            raise serializers.ValidationError("You already have a subscription for this city.")
+
+        return value
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return Subscriptions.objects.create(user = user, **validated_data)
+
+class SubscriptionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscriptions
+        fields = [ 'notification_frequency', 'humidity', 'precipitation', 'wind_speed']
