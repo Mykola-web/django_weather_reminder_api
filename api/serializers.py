@@ -11,34 +11,38 @@ load_dotenv()
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True, required = True)
     password2 = serializers.CharField(write_only = True, required = True)
+    email = serializers.EmailField(required=True)
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'password', 'password2', 'preferred_notification_type', 'webhook_url']
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        email = attrs.get('email')
+
+        if password != password2:
             raise serializers.ValidationError({
                 'password': 'The passwords do not match.'
             })
 
-        if attrs['preferred_notification_type'] == 'webhook' and not attrs['webhook_url']:
-            raise serializers.ValidationError({
-                'webhook_url': 'Webhook URL is required when preferred notification type is webhook.'
-            })
-
-        if CustomUser.objects.filter(email=attrs['email']).exists():
+        if email and CustomUser.objects.filter(email=email).exists():
             raise serializers.ValidationError({
                 'email': 'User with this email already exists'
+            })
+
+        if attrs.get('preferred_notification_type') == 'webhook' and not attrs.get('webhook_url'):
+            raise serializers.ValidationError({
+                'webhook_url': 'Webhook URL is required when preferred notification type is webhook.'
             })
         return attrs
 
     def create(self, validated_data):
         user = CustomUser(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            preferred_notification_type=validated_data['preferred_notification_type'],
-            webhook_url=validated_data.get('webhook_url', None)
+            username = validated_data['username'],
+            email = validated_data['email'],
+            webhook_url = validated_data.get('webhook_url', None)
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -72,7 +76,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def validate_city(self, value):
         #city existence validation
         response = requests.get(
-            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey=OVOkzr6E7ZKU6colAan0wAAGo7WxLIIU')
+            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey={os.getenv('TOMMOROWIO_API_KEY')}')
 
         if response.status_code != 200:
             raise serializers.ValidationError("Invalid location")

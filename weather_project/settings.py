@@ -23,6 +23,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '*',
 ]
 
 # Application definition
@@ -110,9 +111,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DATABASE_URL = os.getenv('DATABASE_URL')
 DATABASES = {
-    'default': dj_database_url.config(default = DATABASE_URL)
+    'default': dj_database_url.config(default = os.getenv('DATABASE_URL'))
 }
 
 REST_FRAMEWORK = {

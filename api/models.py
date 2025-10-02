@@ -20,7 +20,6 @@ class CustomUser(AbstractUser):
     webhook_url = models.URLField(blank = True, null = True)
 
     def clean(self):
-        # вызывается при full_clean() или через ModelForm
         super().clean()
         if self.preferred_notification_type == self.WEBHOOK and not self.webhook_url:
             raise ValidationError({

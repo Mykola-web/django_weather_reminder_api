@@ -36,3 +36,7 @@ Technologies
 -Periodic tasks: Celery + Redis
 
 -Authentication: JWT via DRF SimpleJWT
+
+To fill database with fake data just enter this command:
+python manage.py fake_data_maker
+this command makes 10 new users with 1 subscription to certain city, default = london
