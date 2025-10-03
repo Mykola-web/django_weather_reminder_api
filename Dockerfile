@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8080
 
 # 6. run django with gunicorn
-CMD exec gunicorn weather_project.wsgi:application --bind 0.0.0.0:8080 --workers 3
+CMD exec gunicorn weather_project.wsgi:application --bind 0.0.0.0:$PORT --workers 2

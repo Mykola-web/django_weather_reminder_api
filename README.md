@@ -39,4 +39,5 @@ Technologies
 
 To fill database with fake data just enter this command:
 python manage.py fake_data_maker
-this command makes 10 new users with 1 subscription to certain city, default = london
+This command makes 5 (default) new users with 1 subscription to certain city, default = london.
+Can be expand with --count (your number) flag.
