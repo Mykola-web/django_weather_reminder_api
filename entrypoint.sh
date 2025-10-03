@@ -1,10 +1,16 @@
 #!/bin/sh
-# entrypoint.sh
+set -e  # exit immediately if a command fails
 
-# run migraions
-echo "Applying database migrations..."
-python manage.py migrate --noinput
+echo "Running migrations..."
+python manage.py migrate
 
-# run gunicorn
+# Optional: create superuser from environment variables
+if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
+    echo "Creating superuser..."
+    python manage.py createsuperuser --noinput \
+        --username "$DJANGO_SUPERUSER_USERNAME" \
+        --email "$DJANGO_SUPERUSER_EMAIL" || true
+fi
+
 echo "Starting Gunicorn..."
-exec gunicorn weather_project.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+exec "$@"
