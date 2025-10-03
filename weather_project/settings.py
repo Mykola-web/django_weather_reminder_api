@@ -21,6 +21,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "fallback-key")
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "django-weather-reminder-api-18886423261.europe-west1.run.app",
     'localhost',
     '127.0.0.1',
     '*',
@@ -133,3 +134,7 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'api.CustomUser'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://django-weather-reminder-api-18886423261.europe-west1.run.app",
+]
