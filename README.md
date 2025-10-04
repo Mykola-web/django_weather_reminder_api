@@ -43,3 +43,149 @@ python manage.py fake_data_maker --count 10
 
 This command makes 5 (default) new users with 1 subscription to certain city, default = london.
 Can be expand with --count (your number) flag.
+
+How to use:
+
+### 1. Register User
+**Endpoint:**
+
+POST /api/register/
+
+**URL:**
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/register/
+
+**Request body (JSON):**
+```json
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "12345678",
+  "password2": "12345678",
+  "preferred_notification_type": "webhook",  (optional, defaul = email)
+  "webhook_url": "https://example.com/hook"   (optional)
+}
+
+2. Get Access & Refresh Tokens
+
+Endpoint:
+
+POST /api/token/
+
+URL:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/token/
+
+Request body (JSON):
+
+{
+  "username": "testuser",
+  "password": "12345678"
+}
+
+3. Refresh Access Token
+
+Endpoint:
+
+POST /api/token/refresh/
+
+URL:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/token/refresh/
+
+Request body (JSON):
+
+{
+  "refresh": "YOUR_REFRESH_TOKEN"
+}
+
+⚠️ Authorization Header
+
+Authorization: Bearer YOUR_ACCESS_TOKEN
+
+4. Subscribe to Weather Notifications
+
+Endpoint:
+
+POST /api/subscribe/
+
+URL:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subscribe/
+
+Request body (JSON):
+
+{
+  "city": "kyiv",
+  "notification_frequency": "5"
+}
+
+Required field:
+
+    city
+
+Optional fields (with default values):
+
+{
+  "notification_frequency": "24",   // default
+  "humidity": "True",                // default
+  "precipitation": "True",           // default
+  "wind_speed": "True"               // default
+}
+
+5. List Subscriptions
+
+Endpoint:
+
+GET /api/subs_list/
+
+URL:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subs_list/
+
+Request:
+
+    No body
+
+    Requires Authorization header with access token
+
+6. Update Subscription
+
+Endpoint:
+
+PUT /api/subscriptions/update/<int:pk>/
+
+URL Example:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subscriptions/update/12/
+
+Request body (JSON):
+
+{
+  "notification_frequency": "2",
+  "humidity": "False",
+  "precipitation": "False",
+  "wind_speed": "False"
+}
+
+⚠️ Notes:
+
+    City cannot be changed
+
+    You cannot subscribe to the same city twice
+
+7. Delete Subscription
+
+Endpoint:
+
+DELETE /api/subscriptions/delete/<int:pk>/
+
+URL Example:
+
+https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subscriptions/delete/12/
+
+Request:
+
+    No body
+
+    Requires Authorization header with access token
