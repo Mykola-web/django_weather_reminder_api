@@ -1,12 +1,13 @@
 import os
+
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import CustomUser, Subscriptions
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+from .models import CustomUser, Subscriptions
 
+load_dotenv()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True, required = True)
@@ -48,15 +49,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only = True)
 
     def validate(self, data):
         user = authenticate(**data)
-        if user and user.is_active:
-            return user
-        raise serializers.ValidationError("Wrong password or username")
+
+        if  not user:
+            raise serializers.ValidationError("Wrong password or username")
+
+        if not user.is_active:
+            raise serializers.ValidationError("User is not active")
+
+        return user
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
@@ -65,6 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'email', 'preferred_notification_type', 'webhook_url']
+
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -87,14 +96,15 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         if not user.is_authenticated:
             raise serializers.ValidationError("You must be logged in")
 
-        if Subscriptions.objects.filter(user = user, city = value).exists():
+        if Subscriptions.objects.filter(user=user, city=value).exists():
             raise serializers.ValidationError("You already have a subscription for this city.")
 
         return value
 
     def create(self, validated_data):
         user = self.context['request'].user
-        return Subscriptions.objects.create(user = user, **validated_data)
+        return Subscriptions.objects.create(user=user, **validated_data)
+
 
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
     class Meta:

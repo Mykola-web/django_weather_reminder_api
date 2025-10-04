@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from api.models import CustomUser,Subscriptions
+
+from api.models import CustomUser, Subscriptions
 
 class Command(BaseCommand):
     help = "Command to quickly make certain amount of users"
@@ -20,6 +21,5 @@ class Command(BaseCommand):
                                                           email = f"test{users_to_make}@example.com",
                                                           password = '12345678')
                 Subscriptions.objects.create(user = new_user, city = 'london')
-            users_to_make -= 1
 
         print("Users in database:", CustomUser.objects.count())
