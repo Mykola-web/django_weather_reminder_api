@@ -79,14 +79,14 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscriptions
         fields = ['id', 'user', 'city', 'notification_frequency',
-                  'humidity', 'precipitation', 'wind_speed','last_notified']
+                  'humidity', 'precipitationProbability', 'wind_speed','last_notified']
         read_only_fields = ['id', 'user', 'last_notified']
 
     def validate_city(self, value):
         #city existence validation
         apikey = os.getenv('TOMMOROWIO_API_KEY')
         response = requests.get(
-            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey={apikey }')
+            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey={apikey}')
 
         if response.status_code != 200:
             raise serializers.ValidationError("Invalid location")
@@ -109,4 +109,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscriptions
-        fields = [ 'notification_frequency', 'humidity', 'precipitation', 'wind_speed']
+        fields = [ 'notification_frequency', 'humidity', 'precipitationProbability', 'wind_speed']
