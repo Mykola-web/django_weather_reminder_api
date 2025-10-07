@@ -28,12 +28,12 @@ def build_api_link(data):
 
     fields = fields.rstrip(',')
 
-    url = f'https://api.tomorrow.io/v4/timelines?location={data['city']}' \
-          f'&fields={fields}' \
-          f'&timesteps=1h&startTime={interval_start}' \
-          f'&endTime={interval_end}' \
-          f'&timezone=Europe/Kyiv' \
-          f'&apikey={apikey}'
+    url = f"https://api.tomorrow.io/v4/timelines?location={data['city']}" \
+          f"&fields={fields}" \
+          f"&timesteps=1h&startTime={interval_start}" \
+          f"&endTime={interval_end}" \
+          f"&timezone=Europe/Kyiv" \
+          f"&apikey={apikey}"
     print(url)
     return url
 

@@ -19,7 +19,7 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # 7. expose port (Cloud Run uses $PORT)
-# EXPOSE 8080
+EXPOSE 8080
 
 # 8. run entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
