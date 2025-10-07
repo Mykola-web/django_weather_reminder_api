@@ -86,7 +86,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         #city existence validation
         apikey = os.getenv('TOMMOROWIO_API_KEY')
         response = requests.get(
-            f'https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey={apikey}')
+            f"https://api.tomorrow.io/v4/weather/realtime?location={value}&apikey={apikey}")
 
         if response.status_code != 200:
             raise serializers.ValidationError("Invalid location")
