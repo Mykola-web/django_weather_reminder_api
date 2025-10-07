@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import RegisterSerializer, SubscriptionSerializer, LoginSerializer, SubscriptionUpdateSerializer
 from .models import Subscriptions
-from .tasks import send_weather_notification
+# from .tasks import send_weather_notification
 
 class RegisterUserView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
@@ -39,7 +39,7 @@ class SubscriptionCreateView(generics.CreateAPIView):
             'wind_speed' : subscription.wind_speed,
             "last_notified": subscription.last_notified.isoformat() if subscription.last_notified else None,
         }
-        send_weather_notification(notification_data)
+        # send_weather_notification(notification_data)
 
         return Response({
             "message": "Subscribed successfully",
