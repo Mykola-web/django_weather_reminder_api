@@ -90,7 +90,7 @@ def send_weather_notification(data):
         requests.post(url = user.webhook_url, json = final_message)
     else:
         send_mail(
-            f'Weather notification for {data['city']}, next {data['notification_frequency']} hours',
+            f"Weather notification for {data['city']}, next {data['notification_frequency']} hours",
             final_message,
             os.getenv('EMAIL_HOST_USER'),
             [user.email],
