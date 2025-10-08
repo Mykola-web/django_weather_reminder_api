@@ -104,7 +104,7 @@ def send_weather_notification(data):
 def check_and_send_notifications():
     now = timezone.now()
     for subscription in Subscriptions.objects.all():
-        if not subscription.last_notified or now - subscription.last_notified >= subscription.notification_frequency:
+        if not subscription.last_notified or now - subscription.last_notified >= timedelta(hours=subscription.notification_frequency):
             notification_data = {
                 "user_id": subscription.user.id,
                 "city": subscription.city,
