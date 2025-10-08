@@ -115,4 +115,5 @@ def check_and_send_notifications():
                 "last_notified": subscription.last_notified.isoformat() if subscription.last_notified else None,
             }
             send_weather_notification.delay(notification_data)
+            subscription.last_notified = now
             subscription.save()
