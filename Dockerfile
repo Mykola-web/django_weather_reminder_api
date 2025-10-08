@@ -25,5 +25,5 @@ EXPOSE 8080
 ENTRYPOINT ["/entrypoint.sh"]
 
 # 9. default CMD for Gunicorn
-CMD ["gunicorn", "weather_project.wsgi:application", "--bind", "0.0.0.0:8080", "--workers", "2"]
+CMD ["gunicorn", "weather_project.wsgi:application", "--bind", "0.0.0.0:${PORT:-8080}", "--workers", "2"]
 
