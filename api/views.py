@@ -39,7 +39,7 @@ class SubscriptionCreateView(generics.CreateAPIView):
             'wind_speed' : subscription.wind_speed,
             "last_notified": subscription.last_notified.isoformat() if subscription.last_notified else None,
         }
-        send_weather_notification(notification_data)
+        send_weather_notification.delay(notification_data)
 
         return Response({
             "message": "Subscribed successfully",
