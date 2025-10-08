@@ -14,7 +14,7 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ 
         --username "$DJANGO_SUPERUSER_USERNAME" \
         --email "$DJANGO_SUPERUSER_EMAIL" || true
 fi
-celery -A weather_project worker --loglevel=info
+#celery -A weather_project worker --loglevel=info
 celery -A weather_project beat --loglevel=info
 echo "Starting Gunicorn..."
 exec "$@"
