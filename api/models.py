@@ -35,9 +35,9 @@ class Subscriptions(models.Model):
     city = models.CharField(max_length = 20)
     notification_frequency = models.IntegerField(default = 24)
     humidity = models.BooleanField(default = True)
-    precipitation = models.BooleanField(default = True)
+    precipitationProbability = models.BooleanField(default = True)
     wind_speed = models.BooleanField(default = True)
-    last_notified = models.DateField(auto_now_add = True)
+    last_notified = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'city')
