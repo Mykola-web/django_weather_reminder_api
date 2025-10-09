@@ -21,7 +21,7 @@ def build_api_link(data):
 
     if data['humidity']:
         fields += 'humidity,'
-    if data['precipitationProbability']:
+    if data['precipitation_probability']:
         fields += 'precipitationProbability,'
     if data['wind_speed']:
         fields += 'windSpeed,'
@@ -34,7 +34,6 @@ def build_api_link(data):
           f"&endTime={interval_end}" \
           f"&timezone=Europe/Kyiv" \
           f"&apikey={apikey}"
-    print(url)
     return url
 
 
@@ -110,7 +109,7 @@ def check_and_send_notifications():
                 "city": subscription.city,
                 "notification_frequency": subscription.notification_frequency,
                 'humidity': subscription.humidity,
-                'precipitationProbability': subscription.precipitationProbability,
+                'precipitation_probability': subscription.precipitation_probability,
                 'wind_speed': subscription.wind_speed,
                 "last_notified": subscription.last_notified.isoformat() if subscription.last_notified else None,
             }

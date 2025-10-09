@@ -100,7 +100,6 @@ class TestWeatherApi(TestCase):
     def test_token_obtain_view(self):
         data = {"username": "tester","password": "12345678"}
         response = self.client.post(reverse('token_obtain_pair'), data = data)
-        # print(response.status_code,response.data)
 
         assert response.data['access'] and 'refresh' in str(response.data)
         assert response.status_code == 200
@@ -122,7 +121,7 @@ class TestWeatherApi(TestCase):
             "city": "paris",
             "notification_frequency": "2",
             "humidity": "False",
-            "precipitation": "False",
+            "precipitation_probability": "False",
             "wind_speed": "False"
         }
         response = self.client.post(reverse('subscribe'), data=data)

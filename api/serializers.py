@@ -79,7 +79,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscriptions
         fields = ['id', 'user', 'city', 'notification_frequency',
-                  'humidity', 'precipitationProbability', 'wind_speed','last_notified']
+                  'humidity', 'precipitation_probability', 'wind_speed','last_notified']
         read_only_fields = ['id', 'user', 'last_notified']
 
     def validate_city(self, value):
@@ -109,4 +109,4 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class SubscriptionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscriptions
-        fields = [ 'notification_frequency', 'humidity', 'precipitationProbability', 'wind_speed']
+        fields = [ 'notification_frequency', 'humidity', 'precipitation_probability', 'wind_speed']

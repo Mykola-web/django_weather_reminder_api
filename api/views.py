@@ -35,7 +35,7 @@ class SubscriptionCreateView(generics.CreateAPIView):
             "city": subscription.city,
             "notification_frequency": subscription.notification_frequency,
             'humidity' : subscription.humidity,
-            'precipitationProbability' : subscription.precipitationProbability,
+            'precipitation_probability' : subscription.precipitation_probability,
             'wind_speed' : subscription.wind_speed,
             "last_notified": subscription.last_notified.isoformat() if subscription.last_notified else None,
         }
