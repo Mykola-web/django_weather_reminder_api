@@ -24,3 +24,4 @@ staticfiles/**
 .gitattributes
 celerybeat-schedule
 celerybeat-schedule-wal
+celerybeat-schedule-shm
