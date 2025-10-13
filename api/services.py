@@ -5,8 +5,8 @@ from django.utils import timezone
 
 from .models import Subscription
 
-def create_weather_subscription(user):
-    subscription = Subscription.objects.get(user=user)
+def create_weather_subscription(subscription_id):
+    subscription = Subscription.objects.get(id=subscription_id)
 
     hour = subscription.preferred_notification_time.hour
     minute = subscription.preferred_notification_time.minute
@@ -22,7 +22,7 @@ def create_weather_subscription(user):
 
     PeriodicTask.objects.get_or_create(
         crontab=schedule,
-        name=f"weather_notification_user_{user.id}",
-        task='api.tasks.send_weather_notification',
-        args=json.dumps([user.id]),
+        name=f"weather_notification_user_{subscription.user.id}",
+        task='api.tasks.release_subscription',
+        args=json.dumps([subscription.id][0]),
     )
