@@ -1,7 +1,6 @@
 import json
 
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
-from django.utils import timezone
 
 from .models import Subscription
 
@@ -22,7 +21,7 @@ def create_weather_subscription(subscription_id):
 
     PeriodicTask.objects.get_or_create(
         crontab=schedule,
-        name=f"weather_notification_user_{subscription.user.id}",
+        name=f"weather_notification_for_subscription_id_{subscription.id}",
         task='api.tasks.release_subscription',
-        args=json.dumps([subscription.id][0]),
+        args=json.dumps([subscription.id]),
     )

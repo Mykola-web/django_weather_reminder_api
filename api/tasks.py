@@ -1,13 +1,10 @@
 import os
-from datetime import datetime, timedelta, date
 
-import pytz
 from celery import shared_task
 from django.core.mail import send_mail
 import requests
-from django.utils import timezone
 
-from .models import Subscription, CustomUser
+from .models import Subscription
 
 
 def get_weather_data(url):
@@ -50,6 +47,8 @@ def readable_message(api_response):
 
 @shared_task
 def release_subscription(subscription_id):
+    if isinstance(subscription_id, list):
+        subscription_id = subscription_id[0]
     subscription = Subscription.objects.get(id=subscription_id)
 
     fields = ",".join(subscription.weather_params_list)
