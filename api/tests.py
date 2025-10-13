@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.test import TestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import CustomUser, Subscriptions
+from .models import CustomUser, Subscription
 
 class TestWeatherApi(TestCase):
 
@@ -32,8 +32,8 @@ class TestWeatherApi(TestCase):
         else:
             self.user = create_test_user()
             set_jwt_token(self.user)
-            self.Subscription = Subscriptions.objects.create(user = self.user, city = 'snovsk',
-                                                           notification_frequency = '2')
+            self.Subscription = Subscription.objects.create(user = self.user, city ='snovsk',
+                                                            notification_frequency = '2')
 
     def test_register_view(self):
         data = {
@@ -148,7 +148,7 @@ class TestWeatherApi(TestCase):
         assert response.status_code == 400
 
     def test_subs_list_view(self):
-        Subscriptions.objects.create(user=self.user, city='london')
+        Subscription.objects.create(user=self.user, city='london')
         response = self.client.get(reverse('subs_list'))
 
         assert 'snovsk' and 'london' in str(response.data)
@@ -166,7 +166,7 @@ class TestWeatherApi(TestCase):
 
     def test_delete_subscription_view(self):
         response = self.client.delete(reverse('delete_subscription', kwargs = {'pk': self.Subscription.id}))
-        subscription_after = Subscriptions.objects.filter(user = self.user, city = 'snovsk').exists()
+        subscription_after = Subscription.objects.filter(user = self.user, city ='snovsk').exists()
 
         assert response.status_code == 200
         assert subscription_after == False

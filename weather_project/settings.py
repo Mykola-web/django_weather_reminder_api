@@ -3,9 +3,11 @@ from pathlib import Path
 from datetime import timedelta
 
 import dj_database_url
+from .celery import app as celery_app
 from dotenv import load_dotenv
 
 load_dotenv()
+__all__ = ('celery_app',)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [

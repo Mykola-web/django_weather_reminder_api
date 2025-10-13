@@ -1,11 +1,12 @@
 import os
+from datetime import time
 
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 import requests
 from dotenv import load_dotenv
 
-from .models import CustomUser, Subscriptions
+from .models import CustomUser, Subscription
 
 load_dotenv()
 
@@ -77,10 +78,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subscriptions
-        fields = ['id', 'user', 'city', 'notification_frequency',
-                  'humidity', 'precipitation_probability', 'wind_speed','last_notified']
-        read_only_fields = ['id', 'user', 'last_notified']
+        model = Subscription
+        fields = ['id', 'user', 'city', 'preferred_notification_time',
+                  'forecast_days','weather_params_list']
+        read_only_fields = ['id', 'user']
 
     def validate_city(self, value):
         #city existence validation
@@ -90,23 +91,35 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
         if response.status_code != 200:
             raise serializers.ValidationError("Invalid location")
-        #one city one subscription check means no dublication
+        #one city one subscription check means no duplication
         user = self.context['request'].user
 
         if not user.is_authenticated:
             raise serializers.ValidationError("You must be logged in")
 
-        if Subscriptions.objects.filter(user=user, city=value).exists():
+        if Subscription.objects.filter(user=user, city=value).exists():
             raise serializers.ValidationError("You already have a subscription for this city.")
 
         return value
 
+    def validate_weather_params_list(self, value):
+        allowed = {"humidity", "temperature", "windSpeed", "precipitationProbability"}
+        if not all(param in allowed for param in value):
+            raise serializers.ValidationError("Incorrect weather parameters in given list")
+        return value
+
+    def validate_preferred_notification_time(self, value):
+        if not isinstance(value, time):
+            raise serializers.ValidationError("Time must be in HH:MM format")
+        if value.hour < 0 or value.hour > 23 or value.minute < 0 or value.minute > 59:
+            raise serializers.ValidationError("Invalid hour or minute")
+        return value
+
     def create(self, validated_data):
         user = self.context['request'].user
-        return Subscriptions.objects.create(user=user, **validated_data)
+        return Subscription.objects.create(user=user, **validated_data)
 
 
-class SubscriptionUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscriptions
-        fields = [ 'notification_frequency', 'humidity', 'precipitation_probability', 'wind_speed']
+class SubscriptionUpdateSerializer(SubscriptionSerializer):
+    class Meta(SubscriptionSerializer.Meta):
+        read_only_fields = ['id', 'user', 'city']

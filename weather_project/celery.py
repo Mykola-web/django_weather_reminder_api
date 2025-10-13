@@ -26,9 +26,9 @@ app.conf.accept_content = ['json']
 # Auto-discover tasks.py in installed apps
 app.autodiscover_tasks()
 
-app.conf.beat_schedule = {
-    'my-periodic-task': {
-        'task': 'api.tasks.check_and_send_notifications',
-        'schedule': crontab(minute='*/10'),
-    },
-}
+# app.conf.beat_schedule = {
+#     'my-periodic-task': {
+#         'task': 'api.tasks.check_and_send_notifications',
+#         'schedule': crontab(minute='*/10'),
+#     },
+# }

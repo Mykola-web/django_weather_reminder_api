@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.utils import timezone
 import requests
 
-from .models import Subscriptions, CustomUser
+from .models import Subscription, CustomUser
 
 def build_api_link(data):
     apikey = os.getenv('TOMMOROWIO_API_KEY')
@@ -95,14 +95,14 @@ def send_weather_notification(data):
             [user.email],
         )
     #updating last notified time
-    Subscriptions.objects.filter(user_id = data['user_id'],
-                                 city = data['city']).update(last_notified=timezone.now())
+    Subscription.objects.filter(user_id = data['user_id'],
+                                city = data['city']).update(last_notified=timezone.now())
 
 
 @shared_task
 def check_and_send_notifications():
     now = timezone.now()
-    for subscription in Subscriptions.objects.all():
+    for subscription in Subscription.objects.all():
         if not subscription.last_notified or now - subscription.last_notified >= timedelta(hours=subscription.notification_frequency):
             notification_data = {
                 "user_id": subscription.user.id,

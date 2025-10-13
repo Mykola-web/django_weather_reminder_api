@@ -26,18 +26,26 @@ class CustomUser(AbstractUser):
                 'webhook_url': 'Webhook URL is required when preferred notification type is webhook.'
             })
 
-class Subscriptions(models.Model):
+
+def default_fields():
+    return ['humidity', 'temperature', 'precipitationProbability', 'windSpeed']
+
+
+class Subscription(models.Model):
     user = models.ForeignKey(
         'CustomUser',
         on_delete=models.CASCADE,
         related_name='subscriptions'
     )
-    city = models.CharField(max_length = 20)
-    notification_frequency = models.IntegerField(default = 24)
-    humidity = models.BooleanField(default = True)
-    precipitation_probability = models.BooleanField(default = True)
-    wind_speed = models.BooleanField(default = True)
-    last_notified = models.DateTimeField(auto_now_add=True)
+    city = models.CharField(max_length=20)
+    preferred_notification_time = models.TimeField(default='00:00')
+    forecast_days = models.IntegerField(default=1)
+    weather_params_list = models.JSONField(default=default_fields)
+    # notification_frequency = models.TimeField(default='00:00')
+    # humidity = models.BooleanField(default=True)
+    # precipitation_probability = models.BooleanField(default=True)
+    # wind_speed = models.BooleanField(default=True)
+    # last_notified = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'city')
