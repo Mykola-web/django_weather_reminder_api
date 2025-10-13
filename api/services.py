@@ -17,7 +17,7 @@ def create_weather_subscription(subscription_id):
         day_of_week='*',
         day_of_month='*',
         month_of_year='*',
-        timezone=str(timezone.get_current_timezone()),
+        timezone=str(subscription.timezone),
     )
 
     PeriodicTask.objects.get_or_create(

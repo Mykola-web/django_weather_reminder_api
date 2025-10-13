@@ -80,7 +80,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ['id', 'user', 'city', 'preferred_notification_time',
-                  'forecast_days','weather_params_list']
+                  'forecast_days','weather_params_list', 'timezone']
         read_only_fields = ['id', 'user']
 
     def validate_city(self, value):

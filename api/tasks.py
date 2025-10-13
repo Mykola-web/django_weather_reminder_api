@@ -1,9 +1,11 @@
 import os
 from datetime import datetime, timedelta, date
 
+import pytz
 from celery import shared_task
 from django.core.mail import send_mail
 import requests
+from django.utils import timezone
 
 from .models import Subscription, CustomUser
 
@@ -50,18 +52,12 @@ def readable_message(api_response):
 def release_subscription(subscription_id):
     subscription = Subscription.objects.get(id=subscription_id)
 
-    dt = datetime.combine(date.today(), subscription.preferred_notification_time)
-    dt_plus_one = (dt + timedelta(days=subscription.forecast_days))
-    forecast_start = dt.isoformat()  # example '2025-10-13T06:00:00'
-    forecast_end = dt_plus_one.isoformat()  # example '2025-10-14T06:00:00'
-
     fields = ",".join(subscription.weather_params_list)
 
     url = f"https://api.tomorrow.io/v4/timelines?location={subscription.city}" \
           f"&fields={fields}" \
-          f"&timesteps=1h&startTime={forecast_start}" \
-          f"&endTime={forecast_end}" \
-          f"&timezone=Europe/Kyiv" \
+          f"&timesteps=1h&startTime={subscription.start_time}" \
+          f"&endTime={subscription.end_time}" \
           f"&apikey={os.getenv('TOMMOROWIO_API_KEY')}"
 
     api_response = get_weather_data(url)
@@ -72,7 +68,7 @@ def release_subscription(subscription_id):
         requests.post(url = user.webhook_url, json = message)
     else:
         send_mail(
-            f"Weather notification for {subscription.city}, forecast {subscription.forecast_days} hours",
+            f"Weather forecat for {subscription.forecast_days} days, city {subscription.city}.",
             message,
             os.getenv('EMAIL_HOST_USER'),
             [user.email],
