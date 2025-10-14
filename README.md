@@ -134,7 +134,7 @@ Optional fields (with default values):
 
 {
   "preferred_notification_time": "00:00",   // default
-  "forecast_days": "True",                // default
+  "forecast_days": "1",                // default
   "weather_params_list" : ['humidity', 'temperature', 'precipitationProbability', 'windSpeed'], // default 
   *You can include only the parameters you need and send a list with them, 4 paramaters supported
 }

@@ -33,7 +33,7 @@ class TestWeatherApi(TestCase):
             self.user = create_test_user()
             set_jwt_token(self.user)
             self.Subscription = Subscription.objects.create(user = self.user, city ='snovsk',
-                                                            notification_frequency = '2')
+                                                            forecast_days = '2')
 
     def test_register_view(self):
         data = {
@@ -118,20 +118,22 @@ class TestWeatherApi(TestCase):
 
     def test_subscribe_view(self):
         data = {
-            "city": "paris",
-            "notification_frequency": "2",
-            "humidity": "False",
-            "precipitation_probability": "False",
-            "wind_speed": "False"
+            "city": "kyiv",
+            "preferred_notification_time": "02:00",
+            "forecast_days": "2",
+            "weather_params_list": ["humidity", "temperature", "precipitationProbability"],
+            "timezone": "Europe/Kyiv"
         }
-        response = self.client.post(reverse('subscribe'), data=data)
-
+        response = self.client.post(reverse('subscribe'), data=data, format='json')
         assert response.status_code == 201
-        assert response.data['subscription'] == {'city': 'paris', 'user': 'tester'}
+        assert response.data['subscription'] == {'city': 'kyiv', 'user': 'tester'}
 
     def test_subscribe_without_city(self):
         data = {
-            "notification_frequency": "2",
+            "preferred_notification_time": "02:00",
+            "forecast_days": "2",
+            "weather_params_list": ["humidity", "temperature", "precipitationProbability"],
+            "timezone": "Europe/Kyiv"
         }
         response = self.client.post(reverse('subscribe'), data=data)
 
@@ -151,18 +153,18 @@ class TestWeatherApi(TestCase):
         Subscription.objects.create(user=self.user, city='london')
         response = self.client.get(reverse('subs_list'))
 
-        assert 'snovsk' and 'london' in str(response.data)
+        assert 'london' in str(response.data)
         assert response.status_code == 200
 
     def test_update_subscription_view(self):
         response = self.client.put(reverse('update_subscription', kwargs = {'pk' : self.Subscription.id }),
-                                   data = {"notification_frequency": "12"})
+                                   data = {"forecast_days": "2"})
 
         self.Subscription.refresh_from_db()
 
         assert response.status_code == 200
         assert response.data['message'] == 'Subscription updated successfully'
-        assert self.Subscription.notification_frequency == 12
+        assert self.Subscription.forecast_days == 2
 
     def test_delete_subscription_view(self):
         response = self.client.delete(reverse('delete_subscription', kwargs = {'pk': self.Subscription.id}))

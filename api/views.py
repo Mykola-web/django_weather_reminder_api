@@ -49,9 +49,6 @@ class SubsListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        sub= Subscription.objects.filter(user=user).first()
-        print(sub.timezone,'00000', type(sub.timezone))
-        print(sub)
         return Subscription.objects.filter(user=user)
 
 class SubscriptionUpdateView(generics.GenericAPIView):
