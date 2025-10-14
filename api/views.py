@@ -4,10 +4,9 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .serializers import RegisterSerializer, SubscriptionSerializer, LoginSerializer, SubscriptionUpdateSerializer
+from .serializers import RegisterSerializer, SubscriptionSerializer, SubscriptionUpdateSerializer
 from .models import Subscription
 from .services import create_weather_subscription
-from .tasks import release_subscription
 
 
 class RegisterUserView(generics.CreateAPIView):
@@ -33,7 +32,6 @@ class SubscriptionCreateView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         subscription = serializer.save()
-        # release_subscription.delay([subscription.id])
         create_weather_subscription(subscription.id)
 
         return Response({

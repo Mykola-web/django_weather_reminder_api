@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 
-import pytz
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+import pytz
 from pytz import all_timezones
 
 
