@@ -24,3 +24,8 @@ app.conf.accept_content = ['json']
 
 # Auto-discover tasks.py in installed apps
 app.autodiscover_tasks()
+
+app.conf.update(
+    CELERY_RESULT_EXPIRES=3600,
+    CELERY_TASK_IGNORE_RESULT=True,
+)
