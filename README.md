@@ -33,7 +33,7 @@ Technologies
 
 -HTTP requests: requests
 
--Periodic tasks: Celery + Redis
+-Periodic tasks: Django-celery-beat + PeriodicTasks + Redis
 
 -Authentication: JWT via DRF SimpleJWT
 
@@ -116,21 +116,27 @@ https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subscri
 Request body (JSON):
 
 {
-  "city": "kyiv",
-  "notification_frequency": "5"
+  "city": "tbilisi",
+  "preferred_notification_time": "18:30",
+  "timezone":"Mexico/BajaNorte"
 }
 
-Required field:
 
-    city
+Required fields:
+
+    city,
+    
+⚠️ Notes: 
+If you don't specify a time zone, you will receive notifications at 00:00 UTC time.
+Example : "timezone":"Mexico/BajaNorte") default='UTC'
 
 Optional fields (with default values):
 
 {
-  "notification_frequency": "24",   // default
-  "humidity": "True",                // default
-  "precipitation": "True",           // default
-  "wind_speed": "True"               // default
+  "preferred_notification_time": "00:00",   // default
+  "forecast_days": "True",                // default
+  "weather_params_list" : ['humidity', 'temperature', 'precipitationProbability', 'windSpeed'], // default 
+  *You can include only the parameters you need and send a list with them, 4 paramaters supported
 }
 
 5. List Subscriptions
@@ -162,10 +168,8 @@ https://django-weather-reminder-api-18886423261.europe-west1.run.app/api/subscri
 Request body (JSON):
 
 {
-  "notification_frequency": "2",
-  "humidity": "False",
-  "precipitation": "False",
-  "wind_speed": "False"
+  "preferred_notification_time": "01:55",
+  "timezone":"Europe/Kyiv"
 }
 
 ⚠️ Notes:

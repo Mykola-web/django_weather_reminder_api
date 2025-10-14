@@ -47,8 +47,6 @@ def readable_message(api_response):
 
 @shared_task
 def release_subscription(subscription_id):
-    if isinstance(subscription_id, list):
-        subscription_id = subscription_id[0]
     subscription = Subscription.objects.get(id=subscription_id)
 
     fields = ",".join(subscription.weather_params_list)
